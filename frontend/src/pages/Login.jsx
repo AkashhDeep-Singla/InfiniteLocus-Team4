@@ -23,11 +23,12 @@ const Login = () => {
             localStorage.setItem("user", JSON.stringify(res.data.user));
 
             const role = res.data.user.role;
+            console.log("User role:", role);
 
             if (role === "organizer") {
-                navigate("/organizer/dashboard");
+                navigate("/organizerDashboard");
             } else if (role === "user") {
-                navigate("/user/dashboard");
+                navigate("/dashboard");
             } else {
                 navigate("/login");
             }

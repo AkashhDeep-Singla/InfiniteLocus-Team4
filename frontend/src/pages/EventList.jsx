@@ -6,16 +6,28 @@ const EventList = () => {
     const [events, setEvents] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const fetchEvents = async () => {
-        try {
-            const response = await axios.get("http://localhost:8080/api/v1/event/allevents");
-            setEvents(response.data);
-        } catch (error) {
-            console.error("Failed to fetch events:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const res = await axios.get("http://localhost:8080/api/v1/event/allevents", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                setEvents(res.data);
+            } catch (err) {
+                console.error("Error fetching events:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEvents(); // ✅ only call it once, here
+    }, []);
+
 
     const handleRegister = async (eventId) => {
         try {
@@ -44,10 +56,6 @@ const EventList = () => {
             alert("Failed to register. Please try again.");
         }
     };
-
-    useEffect(() => {
-        fetchEvents();
-    }, []);
 
     return (
         <div>

@@ -13,15 +13,16 @@ const MyRegisteredEvents = () => {
                 const user = JSON.parse(localStorage.getItem("user"));
 
                 const res = await axios.get(
-                    `http://localhost:8080/api/v1/events/my-events/${user._id}`,
+                    `http://localhost:8080/api/v1/user/my-events/${user.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     }
                 );
+                console.log("Fetched registered events:", res.data);
 
-                setEvents(res.data.events);
+                setEvents(res.data);
             } catch (err) {
                 console.error("Error fetching registrations:", err);
             } finally {

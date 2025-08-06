@@ -19,7 +19,7 @@ const AppRoutes = () => {
 
             {user?.role === "organizer" && (
                 <Route element={<OrganizerLayout />}>
-                    <Route path="/dashboard" element={<OrganizerDashboard />} />
+                    <Route path="/organizerDashboard" element={<OrganizerDashboard />} />
                     <Route path="/create-event" element={<CreateEvent />} />
                 </Route>
             )}

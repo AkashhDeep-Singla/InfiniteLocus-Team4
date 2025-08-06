@@ -33,7 +33,7 @@ export const registerEvent = async (req, res) => {
 
 export const getMyEvents = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.id;
         const registeredEvents = await Event.find({ registeredUsers: userId });
         res.status(200).json({ success: true, events: registeredEvents });
     } catch (err) {
