@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -21,7 +22,15 @@ const Login = () => {
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
 
-            navigate("/dashboard");
+            const role = res.data.user.role;
+
+            if (role === "organizer") {
+                navigate("/organizer/dashboard");
+            } else if (role === "user") {
+                navigate("/user/dashboard");
+            } else {
+                navigate("/login");
+            }
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");
         }

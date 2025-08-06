@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { jwtDecode } from "jwt-decode" // install this if you haven't: npm i jwt-decode
+import { jwtDecode } from "jwt-decode"
 
 const OrganizerLayout = () => {
     const [user, setUser] = useState(null)

@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, } from "recharts";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const OrganizerDashboard = () => {
     const [stats, setStats] = useState(null);
@@ -18,7 +18,7 @@ const OrganizerDashboard = () => {
                     return;
                 }
 
-                const decoded = jwt_decode(token);
+                const decoded = jwtDecode(token);
                 const email = decoded.email;
                 const name = decoded.name;
                 setOrganizerName(name || "Organizer");
