@@ -8,15 +8,14 @@ export const getAllEvents = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
-
 export const registerEvent = async (req, res) => {
     try {
-        
-        const {userId,eventId}=req.body; 
+        const { eventId } = req.body;
+        const userId = req.user._id;
+
         const event = await Event.findById(eventId);
         if (!event) return res.status(404).json({ msg: "Event not found" });
 
-        // Prevent duplicate registration
         if (event.registeredUsers.includes(userId)) {
             return res.status(400).json({ msg: "Already registered" });
         }
@@ -31,14 +30,14 @@ export const registerEvent = async (req, res) => {
 };
 
 
-export const getMyEvents = async (req, res) => {
-    const { userId } = req.params;
 
+export const getMyEvents = async (req, res) => {
     try {
-        const registeredEvents = await UserEvent.find({ userId }).populate("eventId");
-        const events = registeredEvents.map(reg => reg.eventId);
-        res.status(200).json({ success: true, events });
+        const userId = req.user._id;
+        const registeredEvents = await Event.find({ registeredUsers: userId });
+        res.status(200).json({ success: true, events: registeredEvents });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 };
+

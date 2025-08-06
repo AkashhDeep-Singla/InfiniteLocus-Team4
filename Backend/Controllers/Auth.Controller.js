@@ -1,3 +1,4 @@
+const JWT_SECRET = '1234572487t6924'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
@@ -45,17 +46,16 @@ export const signupController = async (req, res) => {
 
 export const signinController = async (req, res) => {
     try {
-        const { nameoremail, password, role } = req.body;
-        if (!nameoremail || !password || !role) {
+        const { email, password, role } = req.body;
+        console.log(req.body + "signin controller");
+
+        if (!email || !password || !role) {
             return res.status(400).json({
                 message: "Please fill all the mendatory fields"
             })
         }
         const existingUser = await Auth.findOne({
-            $or: [
-                { username: nameoremail },
-                { email: nameoremail }
-            ]
+            email: email
         });
         console.log(password)
         if (!existingUser) {
@@ -76,7 +76,7 @@ export const signinController = async (req, res) => {
         }
         const token = jwt.sign(
             { id: existingUser._id, role: existingUser.role },
-            process.env.JWT_SECRET,
+            JWT_SECRET,
             { expiresIn: "7d" }
         )
         return res.status(200).json({
@@ -85,7 +85,7 @@ export const signinController = async (req, res) => {
                 id: existingUser._id,
                 name: existingUser.name,
                 email: existingUser.email,
-                role: existingUser.role, 
+                role: existingUser.role,
             },
             token
         })
