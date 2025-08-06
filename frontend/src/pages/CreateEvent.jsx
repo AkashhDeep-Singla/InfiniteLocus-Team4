@@ -3,16 +3,19 @@ import axios from "axios";
 
 const CreateEvent = () => {
     const [form, setForm] = useState({
-        title: "",
-        date: "",
-        location: "",
+        eventName: "",
+        EventTime: "",
+        venue: "",
+        capacity: "",
         description: "",
     });
 
     const [message, setMessage] = useState("");
 
-    const handleChange = (e) =>
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,13 +34,13 @@ const CreateEvent = () => {
             );
 
             if (res.status === 201) {
-                setMessage(" Event created successfully!");
+                setMessage("Event created successfully!");
                 setForm({
-                    title: "",
-                    date: "",
-                    location: "",
-                    description: "",
+                    eventName: "",
+                    EventTime: "",
+                    venue: "",
                     capacity: "",
+                    description: "",
                 });
             }
         } catch (err) {
@@ -47,34 +50,37 @@ const CreateEvent = () => {
     };
 
     return (
-        <div>
-            <h2 className="text-xl font-semibold mb-4">Create New Event</h2>
+        <div className="p-6 max-w-md bg-white rounded shadow">
+            <h2 className="text-2xl font-semibold mb-4">📅 Create New Event</h2>
 
             {message && (
                 <p className="mb-4 text-sm font-medium text-blue-600">{message}</p>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <input
-                    name="title"
-                    placeholder="Event Title"
-                    value={form.title}
+                    name="eventName"
+                    placeholder="Event Name"
+                    value={form.eventName}
                     onChange={handleChange}
-                    className="w-full p-2 border"
+                    required
+                    className="w-full p-2 border rounded"
                 />
                 <input
-                    name="date"
-                    type="date"
-                    value={form.date}
+                    name="EventTime"
+                    type="datetime-local"
+                    value={form.EventTime}
                     onChange={handleChange}
-                    className="w-full p-2 border"
+                    required
+                    className="w-full p-2 border rounded"
                 />
                 <input
-                    name="location"
-                    placeholder="Location"
-                    value={form.location}
+                    name="venue"
+                    placeholder="Venue"
+                    value={form.venue}
                     onChange={handleChange}
-                    className="w-full p-2 border"
+                    required
+                    className="w-full p-2 border rounded"
                 />
                 <input
                     name="capacity"
@@ -82,17 +88,23 @@ const CreateEvent = () => {
                     placeholder="Capacity"
                     value={form.capacity}
                     onChange={handleChange}
-                    className="w-full p-2 border"
+                    min="1"
+                    required
+                    className="w-full p-2 border rounded"
                 />
                 <textarea
                     name="description"
                     placeholder="Description"
                     value={form.description}
                     onChange={handleChange}
-                    className="w-full p-2 border"
+                    required
+                    className="w-full p-2 border rounded"
                 />
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2">
-                    Create
+                <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                    Create Event
                 </button>
             </form>
         </div>
