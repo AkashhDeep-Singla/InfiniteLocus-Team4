@@ -1,17 +1,22 @@
-const JWT_SECRET = '1234572487t6924'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-import Auth from '../Models/Auth.Model.js'
+const JWT_SECRET = '1234572487t6924';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import Auth from '../Models/Auth.Model.js';
+
 dotenv.config();
+
+// 🚀 SIGNUP
 export const signupController = async (req, res) => {
     try {
         const { username, email, password, role, phoneNumber } = req.body;
+
         if (!username || !email || !password || !role) {
             return res.status(400).json({
-                message: "Please fill all the mendatory fields"
-            })
+                message: "Please fill all the mandatory fields"
+            });
         }
+
         if (password.length < 8) {
             return res.status(400).json({
                 message: "Password must be at least 8 characters long"
@@ -22,22 +27,30 @@ export const signupController = async (req, res) => {
         if (existingUser) {
             return res.status(409).json({
                 message: "User already exists"
-            })
+            });
         }
+
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const newUser = await Auth.create({
             username,
             email,
             password: hashedPassword,
             role,
             phoneNumber
-        })
+        });
+
         return res.status(201).json({
             message: `User created successfully with role ${role}`,
-            newUser
+            user: {
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role
+            }
         });
     } catch (error) {
-        console.log("error in signup controller" + error.message);
+        console.log("Signup Error: " + error.message);
         res.status(500).json({
             message: "Internal server error"
         })
@@ -46,53 +59,49 @@ export const signupController = async (req, res) => {
 
 export const signinController = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
-        console.log(req.body + "signin controller");
+        const { email, password } = req.body;
 
-        if (!email || !password || !role) {
+        if (!email || !password) {
             return res.status(400).json({
-                message: "Please fill all the mendatory fields"
-            })
-        }
-        const existingUser = await Auth.findOne({
-            email: email
-        });
-        console.log(password)
-        if (!existingUser) {
-            return res.status(400).json({
-                message: "User doesnot exist"
-            })
-        }
-        if (existingUser.role !== role) {
-            return res.status(403).json({
-                message: `Unauthorized role access`
+                message: "Please fill all the mandatory fields"
             });
         }
+
+        const existingUser = await Auth.findOne({ email });
+
+        if (!existingUser) {
+            return res.status(404).json({
+                message: "User does not exist"
+            });
+        }
+
         const isMatch = await bcrypt.compare(password, existingUser.password);
         if (!isMatch) {
-            return res.status(400).json({
+            return res.status(401).json({
                 message: "Invalid credentials"
-            })
+            });
         }
+
         const token = jwt.sign(
             { id: existingUser._id, role: existingUser.role },
             JWT_SECRET,
             { expiresIn: "7d" }
-        )
+        );
+
         return res.status(200).json({
-            message: `User logged in successfully with role ${role}`,
+            message: `Login successful`,
             user: {
                 id: existingUser._id,
-                name: existingUser.name,
+                username: existingUser.username,
                 email: existingUser.email,
-                role: existingUser.role,
+                role: existingUser.role
             },
             token
-        })
+        });
     } catch (error) {
-        console.log("Signin Error " + error.message);
+        console.log("Signin Error: " + error.message);
         res.status(500).json({
             message: "Internal Server Error"
-        })
+        });
     }
-}
+};

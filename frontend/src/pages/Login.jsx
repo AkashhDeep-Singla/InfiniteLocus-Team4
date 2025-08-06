@@ -1,25 +1,27 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
-    const [form, setForm] = useState({ email: "", password: "", role: "user" })
-    const [error, setError] = useState(null)
-    const navigate = useNavigate()
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-    const handleChange = (e) =>
-        setForm({ ...form, [e.target.name]: e.target.value })
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
 
         try {
-            const res = await axios.post("http://localhost:8080/api/v1/auth/signin", form)
+            const res = await axios.post("http://localhost:8080/api/v1/auth/signin", form);
+
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
 
-            navigate("/dashboard")
+            navigate("/dashboard");
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");
         }
@@ -34,6 +36,7 @@ const Login = () => {
                     type="email"
                     name="email"
                     placeholder="Email"
+                    value={form.email}
                     onChange={handleChange}
                     className="w-full p-2 border rounded"
                     required
@@ -42,18 +45,12 @@ const Login = () => {
                     type="password"
                     name="password"
                     placeholder="Password"
+                    value={form.password}
                     onChange={handleChange}
                     className="w-full p-2 border rounded"
                     required
                 />
-                <select
-                    name="role"
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                >
-                    <option value="user">User</option>
-                    <option value="organizer">Organizer</option>
-                </select>
+
                 <button
                     type="submit"
                     className="w-full bg-blue-500 text-white p-2 rounded"

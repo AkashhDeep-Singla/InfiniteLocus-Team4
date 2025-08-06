@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"
+import axios from "axios";
 
 const Signup = () => {
     const [form, setForm] = useState({
-        name: "",
+        username: "",
         email: "",
         password: "",
         role: "user",
@@ -37,7 +37,7 @@ const Signup = () => {
             <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
                 <input
                     type="text"
-                    name="name"
+                    name="username"
                     placeholder="Full Name"
                     onChange={handleChange}
                     className="w-full p-2 border rounded"

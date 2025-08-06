@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import EventCard from "../components/EventCard";
-import axios from "axios";
+import { useEffect, useState } from "react"
+import EventCard from "../components/EventCard"
+import axios from "axios"
 
 const EventList = () => {
-    const [events, setEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [events, setEvents] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const fetchEvents = async () => {
         try {
@@ -20,12 +20,15 @@ const EventList = () => {
     const handleRegister = async (eventId) => {
         try {
             const token = localStorage.getItem("token");
-            const eventData = {
-                eventId,
+
+            if (!token) {
+                alert("You must be logged in to register.");
+                return;
             }
+
             const response = await axios.post(
-                `http://localhost:8080/api/v1/user/register/`,
-                { eventData },
+                `http://localhost:8080/api/v1/user/register`,
+                { eventId },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -64,7 +67,7 @@ const EventList = () => {
                 </div>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default EventList;
+export default EventList

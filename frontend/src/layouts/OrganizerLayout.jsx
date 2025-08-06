@@ -1,8 +1,32 @@
-import { Outlet, NavLink } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
+import { Outlet, NavLink, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { jwtDecode } from "jwt-decode" // install this if you haven't: npm i jwt-decode
 
 const OrganizerLayout = () => {
-    const { logout, user } = useAuth()
+    const [user, setUser] = useState(null)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (!token) {
+            navigate("/login")
+        } else {
+            try {
+                const decoded = jwtDecode(token)
+                setUser(decoded)
+            } catch (err) {
+                console.error("Invalid token", err)
+                localStorage.removeItem("token")
+                navigate("/login")
+            }
+        }
+    }, [navigate])
+
+    const logout = () => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
+        navigate("/login")
+    }
 
     return (
         <div className="flex">

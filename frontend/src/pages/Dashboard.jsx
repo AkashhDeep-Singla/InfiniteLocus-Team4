@@ -1,24 +1,33 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import { useEffect, useState } from "react"
-import { useAuth } from "../context/AuthContext"
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, } from "recharts";
+import { useEffect, useState } from "react";
 
-const COLORS = ["#4ade80", "#f87171"]
+const COLORS = ["#4ade80", "#f87171"];
 
 const Dashboard = () => {
-    const [data, setData] = useState(null)
-    const { user } = useAuth()
+    const [data, setData] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const fetchDashboard = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const user = JSON.parse(localStorage.getItem("user"));
+                const storedUser = JSON.parse(localStorage.getItem("user"));
 
-                const res = await fetch(`http://localhost:8080/api/v1/dashboard/${user._id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                if (!token || !storedUser) {
+                    window.location.href = "/login";
+                    return;
+                }
+
+                setUser(storedUser);
+
+                const res = await fetch(
+                    `http://localhost:8080/api/v1/dashboard/${storedUser.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
                 const dashboardData = await res.json();
                 setData(dashboardData);
@@ -30,13 +39,14 @@ const Dashboard = () => {
         fetchDashboard();
     }, []);
 
-
     if (!data) return <p>Loading dashboard...</p>;
 
-    const chartData = Object.entries(data.registrationStatus).map(([name, value]) => ({
-        name,
-        value,
-    }));
+    const chartData = Object.entries(data.registrationStatus).map(
+        ([name, value]) => ({
+            name,
+            value,
+        })
+    );
 
     return (
         <div>
@@ -53,17 +63,23 @@ const Dashboard = () => {
                 </div>
                 <div className="bg-white p-4 rounded shadow text-center">
                     <h2 className="text-sm text-gray-500">Registered Events</h2>
-                    <p className="text-3xl font-bold text-green-500">{data.registeredEvents}</p>
+                    <p className="text-3xl font-bold text-green-500">
+                        {data.registeredEvents}
+                    </p>
                 </div>
                 <div className="bg-white p-4 rounded shadow text-center">
                     <h2 className="text-sm text-gray-500">Upcoming Events</h2>
-                    <p className="text-3xl font-bold text-blue-500">{data.upcomingEvents}</p>
+                    <p className="text-3xl font-bold text-blue-500">
+                        {data.upcomingEvents}
+                    </p>
                 </div>
             </div>
 
             {/* Pie Chart */}
             <div className="bg-white p-6 rounded shadow w-full max-w-lg mx-auto">
-                <h2 className="text-xl font-semibold mb-4 text-center">Registration Status</h2>
+                <h2 className="text-xl font-semibold mb-4 text-center">
+                    Registration Status
+                </h2>
                 <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                         <Pie

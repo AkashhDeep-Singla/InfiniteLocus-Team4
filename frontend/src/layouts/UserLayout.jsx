@@ -7,10 +7,18 @@ const UserLayout = () => {
 
     useEffect(() => {
         const userData = localStorage.getItem("user");
+
         if (!userData) {
             navigate("/login");
         } else {
-            setUser(JSON.parse(userData));
+            try {
+                const parsedUser = JSON.parse(userData);
+                setUser(parsedUser);
+            } catch (error) {
+                console.error("Invalid user data in localStorage:", error);
+                localStorage.removeItem("user");
+                navigate("/login");
+            }
         }
     }, [navigate]);
 
@@ -46,7 +54,7 @@ const UserLayout = () => {
                 {/* Mobile Top Bar */}
                 <div className="md:hidden flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold">
-                        Hello, {user?.name || "User"}
+                        Hello, {user?.username || "User"}
                     </h2>
                     <button onClick={logout} className="text-sm text-red-500">
                         Logout

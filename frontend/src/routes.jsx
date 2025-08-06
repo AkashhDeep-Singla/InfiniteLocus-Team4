@@ -1,17 +1,16 @@
-import { Routes, Route, Navigate } from "react-router-dom"
-import { useAuth } from "./context/AuthContext"
-import Login from "./pages/Login"
-import Signup from "./pages/Signup"
-import Dashboard from "./pages/Dashboard"
-import CreateEvent from "./pages/createEvent"
-import EventList from "./pages/EventList"
-import MyRegisteredEvents from "./pages/MyRegisteredEvents"
-import OrganizerLayout from "./layouts/OrganizerLayout"
-import UserLayout from "./layouts/UserLayout"
-import OrganizerDashboard from "./pages/OrganizerDashboard"
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import CreateEvent from "./pages/createEvent";
+import EventList from "./pages/EventList";
+import MyRegisteredEvents from "./pages/MyRegisteredEvents";
+import OrganizerLayout from "./layouts/OrganizerLayout";
+import UserLayout from "./layouts/UserLayout";
+import OrganizerDashboard from "./pages/OrganizerDashboard";
 
 const AppRoutes = () => {
-    const { user } = useAuth();
+    const user = JSON.parse(localStorage.getItem("user"));
 
     return (
         <Routes>
@@ -30,7 +29,6 @@ const AppRoutes = () => {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/events" element={<EventList />} />
                     <Route path="/my-registrations" element={<MyRegisteredEvents />} />
-
                 </Route>
             )}
 

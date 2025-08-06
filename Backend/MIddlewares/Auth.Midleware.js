@@ -1,13 +1,26 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
-export const requireSignIn = (req, res, next) => {
+import jwt from "jsonwebtoken";
+import Auth from "../Models/User.model.js";
+
+export const requireSignIn = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized - No token" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
   try {
-    const token = req.headers.authorization;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+
+    // Get user by email
+    const user = await Auth.findOne({ email: decoded.email }).select("-password");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    req.user = user
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ message: "Unauthorized - Invalid token" });
   }
 };
